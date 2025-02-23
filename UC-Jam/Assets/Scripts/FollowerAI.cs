@@ -1,57 +1,73 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FollowerAI : MonoBehaviour
 {
     public Transform player; // Reference to the player
-    public float followDelay = 0.5f; // Delay time in seconds
-    public float followDistance = 1.5f; // Minimum distance to keep from the player
-    public float moveSpeed = 5f; // Movement speed of the follower
+    public float followSpeed = 3f; // Speed at which the follower moves towards the player
+    public float spreadDistance = 1f; // Distance the follower will spread out when the player stops
+    public LayerMask groundLayer; // Ground layer mask for detecting if grounded
 
-    private Queue<Vector2> positionHistory = new Queue<Vector2>();
-    private SpriteRenderer spriteRenderer;
+    public Transform groundCheckPlayerLeft; // Empty GameObject for ground check on the left side of the player
+    public Transform groundCheckPlayerRight; // Empty GameObject for ground check on the right side of the player
 
-    void Start()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        InvokeRepeating("RecordPosition", 0f, followDelay / 10f); // Record positions at a steady rate
-    }
+    private Vector3 targetPosition; // The position the follower is moving toward
+    private bool isGrounded; // To check if the follower is on the ground
+    private bool spreadLeft = true; // Whether the follower spreads left or right based on ground checks
 
     void Update()
     {
-        if (positionHistory.Count > 0)
+        // Check if the follower is grounded
+        isGrounded = Physics2D.OverlapCircle(transform.position, 0.1f, groundLayer);
+
+        // Check the ground status on the player's left and right sides
+        bool leftGrounded = Physics2D.Raycast(groundCheckPlayerLeft.position, Vector2.down, 1f, groundLayer);
+        bool rightGrounded = Physics2D.Raycast(groundCheckPlayerRight.position, Vector2.down, 1f, groundLayer);
+
+        // Set the spread direction based on the ground checks
+        if (leftGrounded && rightGrounded)
         {
-            Vector2 targetPosition = positionHistory.Peek();
-            float distance = Vector2.Distance(transform.position, targetPosition);
-
-            if (distance > followDistance)
-            {
-                transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-                UpdateSpriteDirection(targetPosition);
-            }
-
-            if (Vector2.Distance(transform.position, targetPosition) < 0.1f)
-            {
-                positionHistory.Dequeue(); // Remove old positions once reached
-            }
+            spreadLeft = true; // Spread left if both sides have ground
         }
-    }
+        else if (leftGrounded && !rightGrounded)
+        {
+            spreadLeft = true; // Spread left if only the left side has ground
+        }
+        else if (!leftGrounded && rightGrounded)
+        {
+            spreadLeft = false; // Spread right if only the right side has ground
+        }
+        else
+        {
+            spreadLeft = false; // No spread if neither side has ground
+        }
 
-    void RecordPosition()
-    {
+        // If player is moving, follow their position
         if (player != null)
         {
-            positionHistory.Enqueue(player.position);
+            // If player is moving horizontally, move toward the player horizontally and vertically
+            if (player.GetComponent<Rigidbody2D>().linearVelocity.magnitude > 0.1f)
+            {
+                targetPosition = player.position;
+            }
+            // If player isn't moving, apply horizontal spread distance while matching vertical position
+            else
+            {
+                // Apply spread to the horizontal direction based on the spreadLeft condition
+                float spreadDirection = spreadLeft ? -1f : 1f;
+
+                // Set the target position to match the player's vertical position and apply horizontal spread
+                targetPosition = new Vector3(player.position.x + spreadDirection * spreadDistance, player.position.y, transform.position.z);
+            }
+
+            // Smoothly move to the target position
+            transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
         }
-    }
 
-    void UpdateSpriteDirection(Vector2 targetPosition)
-    {
-        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-
-        if (direction.x != 0)
+        // If the follower isn't grounded but the player is, quickly move to the player
+        if (!isGrounded && player.GetComponent<Rigidbody2D>().linearVelocity.magnitude > 0.1f)
         {
-            spriteRenderer.flipX = direction.x < 0;
+            targetPosition = player.position;
+            transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
         }
     }
 }
