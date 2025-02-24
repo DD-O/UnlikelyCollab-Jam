@@ -1445,7 +1445,7 @@ MonoBehaviour:
   HuddleTargetLEFT: {fileID: 983159494}
   HuddleTargetRIGHT: {fileID: 1618958857}
   huddleLeft: 0
-  TimeOffset: 0.1
+  TimeOffset: 0.15
   Granularity: 17
   InterpolationSpeed: 100
   speedReductionValue: 70

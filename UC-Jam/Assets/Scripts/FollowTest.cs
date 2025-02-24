@@ -28,6 +28,7 @@ public class FollowTest : MonoBehaviour
 
     // Reference to the PlayerController script to access isGrounded
     private PlayerController playerController;
+    private Rigidbody2D playerRb;
 
     // Cached grounded values for optimization
     private bool groundedL;
@@ -39,6 +40,9 @@ public class FollowTest : MonoBehaviour
         // Cache reference to HuddleCheck and PlayerController
         groundCheckSides = GetComponent<HuddleCheck>();
         playerController = ObjectToFollow.GetComponent<PlayerController>();
+
+        // Get Rigidbody2D of the player
+        playerRb = ObjectToFollow.GetComponent<Rigidbody2D>();
     }
 
     protected void Update()
@@ -88,7 +92,7 @@ public class FollowTest : MonoBehaviour
             groundedR = groundCheckSides.GroundedR;
 
             // If room on left but not right, follow HuddleTargetLEFT
-            if (groundedL && !groundedR && playerisGrounded)
+            if (groundedL && !groundedR && playerisGrounded && !IsPlayerMoving())
             {
                 if (HuddleTargetLEFT != null)
                 {
@@ -97,7 +101,7 @@ public class FollowTest : MonoBehaviour
                 }
             }
             // If room on right but not left, follow HuddleTargetRIGHT
-            else if (groundedR && !groundedL && playerisGrounded)
+            else if (groundedR && !groundedL && playerisGrounded && !IsPlayerMoving())
             {
                 if (HuddleTargetRIGHT != null)
                 {
@@ -106,7 +110,7 @@ public class FollowTest : MonoBehaviour
                 }
             }
             // If there is room on both sides
-            else if (groundedR && groundedL)
+            else if (groundedR && groundedL && !IsPlayerMoving())
             {
                 if (huddleLeft)
                 {
@@ -149,6 +153,13 @@ public class FollowTest : MonoBehaviour
         }
     }
 
+    private bool IsPlayerMoving()
+    {
+        if (playerRb == null)
+            return false; // If Rigidbody2D is missing, assume not moving
+
+        return playerRb.linearVelocity != Vector2.zero; // Returns true if player is moving
+    }
 
     void Flip()
     {
