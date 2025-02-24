@@ -20,9 +20,8 @@ public class HuddleCheck : MonoBehaviour
         groundedR = Physics2D.Raycast(pointR.position, Vector2.down, raycastDistance, groundLayer);
 
         // Debugging: Visualize the rays in Scene View
-        Debug.DrawRay(pointL.position, Vector2.down * raycastDistance, groundedL ? Color.green : Color.red);
-        Debug.DrawRay(pointR.position, Vector2.down * raycastDistance, groundedR ? Color.green : Color.red);
+        //Debug.DrawRay(pointL.position, Vector2.down * raycastDistance, groundedL ? Color.green : Color.red);
+        //Debug.DrawRay(pointR.position, Vector2.down * raycastDistance, groundedR ? Color.green : Color.red);
 
-        Debug.Log($"GroundedL: {groundedL}, GroundedR: {groundedR}");
     }
 }
