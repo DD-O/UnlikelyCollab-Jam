@@ -7,12 +7,13 @@ public class FollowTest : MonoBehaviour
     public GameObject HuddleTargetLEFT;
     public GameObject HuddleTargetRIGHT;
     public bool huddleLeft;
-    public float TimeOffset = 1;
-    public int Granularity = 10;
+    public float TimeOffset;
+    public int Granularity;
 
-    public float InterpolationSpeed = 10;
+    public float InterpolationSpeed;
+    public float speedReductionValue;
 
-    public float flipDelay = 0.5f; // Delay in seconds before flipping (customizable)
+    public float flipDelay; // Delay in seconds before flipping (customizable)
 
     private Queue<Vector3> path = new Queue<Vector3>();
     private float queueTimer;
@@ -31,6 +32,7 @@ public class FollowTest : MonoBehaviour
     // Cached grounded values for optimization
     private bool groundedL;
     private bool groundedR;
+    private bool speedReduced = false;
 
     protected void Start()
     {
@@ -78,48 +80,54 @@ public class FollowTest : MonoBehaviour
 
         queueTimer -= Time.fixedDeltaTime;
 
-        // Check if the player is grounded using the isGrounded value from PlayerController
         bool playerisGrounded = playerController.isGrounded;
 
-        // Only check if groundCheckSides is assigned and GroundedL or GroundedR are needed
         if (groundCheckSides != null)
         {
-            // Cache the grounded values
             groundedL = groundCheckSides.GroundedL;
             groundedR = groundCheckSides.GroundedR;
 
             // If room on left but not right, follow HuddleTargetLEFT
             if (groundedL && !groundedR && playerisGrounded)
             {
-                if (HuddleTargetLEFT != null) // Make sure HuddleTargetLEFT is assigned
+                if (HuddleTargetLEFT != null)
                 {
-                    // Update path to follow HuddleTargetLEFT's position
+                    ApplySpeedReduction();  // Refactored method
                     path.Enqueue(HuddleTargetLEFT.transform.position);
                 }
             }
             // If room on right but not left, follow HuddleTargetRIGHT
             else if (groundedR && !groundedL && playerisGrounded)
             {
-                if (HuddleTargetRIGHT != null) // Make sure HuddleTargetRIGHT is assigned
+                if (HuddleTargetRIGHT != null)
                 {
-                    // Update path to follow HuddleTargetRIGHT's position
+                    ApplySpeedReduction();  // Refactored method
                     path.Enqueue(HuddleTargetRIGHT.transform.position);
                 }
             }
             // If there is room on both sides
             else if (groundedR && groundedL)
             {
-                if (huddleLeft) { path.Enqueue(HuddleTargetLEFT.transform.position); } //if huddleLeft is true go left
-                else { path.Enqueue(HuddleTargetRIGHT.transform.position); } // or go right if false
+                if (huddleLeft)
+                {
+                    ApplySpeedReduction();  // Refactored method
+                    path.Enqueue(HuddleTargetLEFT.transform.position);
+                }
+                else
+                {
+                    ApplySpeedReduction();  // Refactored method
+                    path.Enqueue(HuddleTargetRIGHT.transform.position);
+                }
             }
-            else // If no room, continue stacking on player
+            else
             {
+                ApplySpeedReduction();  // Refactored method
                 path.Enqueue(ObjectToFollow.transform.position);
             }
         }
         else
         {
-            // If groundCheckSides is not assigned, default to following ObjectToFollow
+            ApplySpeedReduction();  // Refactored method
             path.Enqueue(ObjectToFollow.transform.position);
         }
 
@@ -131,6 +139,16 @@ public class FollowTest : MonoBehaviour
                 currentPathPosition = path.Dequeue();
         }
     }
+
+    private void ApplySpeedReduction()
+    {
+        if (!speedReduced)
+        {
+            InterpolationSpeed -= speedReductionValue;
+            speedReduced = true;
+        }
+    }
+
 
     void Flip()
     {

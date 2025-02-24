@@ -371,6 +371,7 @@ MonoBehaviour:
   TimeOffset: 0.1
   Granularity: 10
   InterpolationSpeed: 100
+  speedReductionValue: 70
   flipDelay: 0
 --- !u!114 &237768928
 MonoBehaviour:
@@ -1447,6 +1448,7 @@ MonoBehaviour:
   TimeOffset: 0.1
   Granularity: 17
   InterpolationSpeed: 100
+  speedReductionValue: 70
   flipDelay: 0
 --- !u!4 &1906966284
 Transform:
