@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb;
     private bool facingRight = true;
-    private bool isGrounded;
+    public bool isGrounded;
 
     void Awake()
     {
@@ -60,4 +60,5 @@ public class PlayerController : MonoBehaviour
         facingRight = !facingRight;
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
+
 }
