@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: be37a83e5571f604dacfd4d034b69b01
+guid: 1b0749772ac98bd4eab000fd3916f1c5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8195346529397948365
-    second: square_idle_0
+      213: -4944316383992700716
+    second: star_run_0006_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: square_idle_0
+      name: star_run_0006_0
       rect:
         serializedVersion: 2
-        x: 31
-        y: 5
-        width: 186
-        height: 224
+        x: 108
+        y: 7
+        width: 303
+        height: 290
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dcfbef76f38bbb170800000000000000
-      internalID: 8195346529397948365
+      spriteID: 4d0a8f2e172426bb0800000000000000
+      internalID: -4944316383992700716
       vertices: []
       indices: 
       edges: []
