@@ -39,11 +39,23 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: DistortionEffect
-    uniqueID: 2166037007
-    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Triangle
+    uniqueID: 2426964449
+    locked: 0
+  - name: Heart
+    uniqueID: 1097690199
+    locked: 0
+  - name: Circle
+    uniqueID: 341962807
+    locked: 0
+  - name: Star
+    uniqueID: 3492549203
+    locked: 0
+  - name: Player
+    uniqueID: 1033477187
     locked: 0
   m_RenderingLayers:
   - Default
