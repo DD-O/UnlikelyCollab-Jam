@@ -1,10 +1,7 @@
 fileFormatVersion: 2
-guid: ae30c4fd97c519147b25b90e52b755f7
+guid: 38673c523eb9fa743b1cee68cda81878
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 4226444230976053169
-    second: circle_run_0007_0
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,23 +110,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: circle_run_0007_0
+      name: circle_run_0000_0
       rect:
         serializedVersion: 2
-        x: 44
-        y: 114
-        width: 402
-        height: 312
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1bf935aa2a857aa30800000000000000
-      internalID: 4226444230976053169
+      spriteID: c291ef1a2d700e4a0800000000000000
+      internalID: -6566239655463872212
       vertices: []
       indices: 
       edges: []
@@ -138,7 +135,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1954381c0a5d1354e9951d8e368314ba
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +145,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      circle_run_0007_0: 4226444230976053169
+      circle_run_0000_0: -6566239655463872212
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
