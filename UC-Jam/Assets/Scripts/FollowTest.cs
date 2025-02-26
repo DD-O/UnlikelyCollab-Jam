@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FollowTest : MonoBehaviour
 {
@@ -42,24 +43,33 @@ public class FollowTest : MonoBehaviour
     // New reference for the follower's ground check position (empty GameObject)
     public GameObject followerGroundCheck;
 
-    // Variable to store the follower's previous position
+    // Rigidbody2D reference for the follower's own movement
+    private Rigidbody2D followerRb;
+
+    // Store the previous position for velocity calculation
     private Vector3 previousPosition;
 
     void Start()
     {
         // Initialize references
         groundCheckSides = GetComponent<HuddleCheck>();
-        playerController = ObjectToFollow.GetComponent<PlayerController>();
-        playerRb = ObjectToFollow.GetComponent<Rigidbody2D>();
-        playerAnimator = ObjectToFollow.GetComponent<Animator>();
-        followerAnimator = GetComponent<Animator>();
+        playerController = ObjectToFollow.GetComponentInParent<PlayerController>(); // Get from parent
+        playerRb = ObjectToFollow.GetComponentInParent<Rigidbody2D>(); // Get from parent
+        playerAnimator = ObjectToFollow.GetComponentInParent<Animator>(); // Get from parent
+        followerAnimator = GetComponent<Animator>(); // Follower's own animator
+        followerRb = GetComponent<Rigidbody2D>(); // Follower's Rigidbody2D for movement
 
-        // Initialize previous position
+        // Set the previous position to the starting position
         previousPosition = transform.position;
     }
 
     void Update()
     {
+        // Manually calculate velocity
+        Vector3 velocity = (transform.position - previousPosition) / Time.deltaTime;
+        previousPosition = transform.position;
+
+        // Interpolate position
         if (currentPathPosition != Vector3.zero)
             transform.position += (currentPathPosition - transform.position) * Time.deltaTime * InterpolationSpeed;
 
@@ -86,18 +96,8 @@ public class FollowTest : MonoBehaviour
             Flip();
         }
 
-        // Calculate the follower's movement by comparing positions
-        Vector3 positionDelta = transform.position - previousPosition;
-
-        // Update the previous position for the next frame
-        previousPosition = transform.position;
-
-        // Sync animations with the calculated movement
-        SyncAnimations(positionDelta);
-
-        // Constantly log whether the follower is grounded
-        bool followerIsGrounded = IsFollowerGrounded(); // Use raycast to check if follower is grounded
-        Debug.Log("Follower grounded: " + followerIsGrounded); // Log the grounded state
+        // Sync animations with the follower's velocity
+        SyncAnimations(velocity);
     }
 
     void FixedUpdate()
@@ -163,6 +163,8 @@ public class FollowTest : MonoBehaviour
             if (path.Count == Granularity)
                 currentPathPosition = path.Dequeue();
         }
+
+        Debug.Log(followerRb.linearVelocity); // You can remove this as you're using manual velocity calculation
     }
 
     private void ApplySpeedReduction()
@@ -189,76 +191,104 @@ public class FollowTest : MonoBehaviour
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 
-    private void SyncAnimations(Vector3 positionDelta)
+    void SyncAnimations(Vector3 velocity)
     {
-        bool playerIsJumping = playerAnimator.GetBool("isJump_Anim");
-        bool playerIsFalling = playerAnimator.GetBool("isFalling_Anim");
-        bool followerIsGrounded = IsFollowerGrounded();  // Use follower's grounded check
+        // First, check if the follower is grounded
+        bool followerIsGrounded = IsFollowerGrounded();
 
-        // Set isGrounded_Anim based on the follower's grounded state
-        followerAnimator.SetBool("isGrounded_Anim", followerIsGrounded); // Set this parameter based on grounded status
-
-        // Syncing the Running Animation, but only if the follower is grounded
+        // Handle Running Animation
         if (followerIsGrounded)
         {
-            if (Mathf.Abs(playerRb.linearVelocity.x) > 0.01f)
+            Debug.Log("GROUNDED!");
+            // Check horizontal velocity to determine if the follower is moving left or right
+            Debug.Log("in loop " + Mathf.Abs(velocity.x));
+
+            if (Mathf.Abs(velocity.x) > 0.1f)  // Significant movement
             {
-                followerAnimator.SetFloat("isRun_Anim", Mathf.Abs(playerRb.linearVelocity.x)); // Pass speed to follower
+                // Trigger running animation based on horizontal velocity
+                followerAnimator.SetFloat("isRun_Anim", Mathf.Abs(velocity.x));
+                Debug.Log("RUNNING!");
             }
             else
             {
-                followerAnimator.SetFloat("isRun_Anim", 0f); // Stop running animation if no significant movement
+                // Stop running animation if no movement
+                followerAnimator.SetFloat("isRun_Anim", 0f);
+            }
+
+            // Handle Idle Animation (when on ground and not moving)
+            if (Mathf.Abs(velocity.x) < 0.1f && Mathf.Abs(velocity.y) < 0.1f)
+            {
+                Debug.Log("HIT");
+
+                // Trigger idle animation if the follower is grounded but not moving
+                if (!followerAnimator.GetBool("isIdle_Anim")) // Avoid redundant calls
+                {
+                    Debug.Log("HIT2");
+                    followerAnimator.SetBool("isIdle_Anim", true);
+                }
+            }
+            else
+            {
+                // Stop idle animation if there's movement
+                if (followerAnimator.GetBool("isIdle_Anim"))
+                {
+                    followerAnimator.SetBool("isIdle_Anim", false);
+                }
             }
         }
         else
         {
-            followerAnimator.SetFloat("isRun_Anim", 0f); // Reset run animation if not grounded
+            // Reset run animation if not grounded
+            followerAnimator.SetFloat("isRun_Anim", 0f);
         }
 
-        // Handle Jumping animation with delay
-        if (playerIsJumping && !followerIsGrounded)
+        // Handle Jump Animation (based on upward velocity)
+        if (!followerIsGrounded && velocity.y > 0.1f)
         {
-            StartCoroutine(TriggerAnimationWithDelay("isJump_Anim", animationDelay));
-        }
-        else if (!playerIsJumping && followerIsGrounded)
-        {
-            followerAnimator.SetBool("isJump_Anim", false); // Reset jump animation
-        }
-
-        // Handle Falling animation with delay
-        if (playerIsFalling && !followerIsGrounded && !playerIsJumping)
-        {
-            StartCoroutine(TriggerAnimationWithDelay("isFalling_Anim", animationDelay));
-        }
-        else if (!playerIsFalling && followerIsGrounded)
-        {
-            followerAnimator.SetBool("isFalling_Anim", false); // Reset falling animation
-        }
-
-        // Ensure that the follower does not get stuck in the falling animation once grounded
-        if (followerIsGrounded && !playerIsJumping && !playerIsFalling)
-        {
-            followerAnimator.SetBool("isFalling_Anim", false); // Ensure falling animation is off if grounded
-        }
-
-        // Follower idle animation when grounded and not moving horizontally
-        if (followerIsGrounded && Mathf.Abs(positionDelta.x) < 0.1f && !playerIsJumping && !playerIsFalling && Mathf.Abs(playerRb.linearVelocity.x) < 0.1f)
-        {
-            followerAnimator.SetBool("isIdle_Anim", true);  // Call idle animation only if follower is not moving horizontally
+            if (!followerAnimator.GetBool("isJump_Anim")) // Avoid redundant calls
+            {
+                followerAnimator.SetBool("isJump_Anim", true);
+            }
         }
         else
         {
-            followerAnimator.SetBool("isIdle_Anim", false); // Reset idle animation when moving or falling
+            if (followerAnimator.GetBool("isJump_Anim"))
+            {
+                followerAnimator.SetBool("isJump_Anim", false);
+            }
+        }
+
+        // Handle Falling Animation (based on downward velocity)
+        if (!followerIsGrounded && velocity.y < -0.1f)
+        {
+            if (!followerAnimator.GetBool("isFalling_Anim")) // Avoid redundant calls
+            {
+                followerAnimator.SetBool("isFalling_Anim", true);
+            }
+        }
+        else
+        {
+            // Only stop falling animation if we're grounded or no longer falling
+            if (followerAnimator.GetBool("isFalling_Anim"))
+            {
+                followerAnimator.SetBool("isFalling_Anim", false);
+            }
+
+            // Ensure idle animation is triggered when we land
+            if (followerIsGrounded && Mathf.Abs(velocity.x) < 0.1f)
+            {
+                Debug.Log("LANDED AND IDLE");
+
+                // Trigger idle animation if the follower is grounded and not moving
+                if (!followerAnimator.GetBool("isIdle_Anim"))
+                {
+                    followerAnimator.SetBool("isIdle_Anim", true);
+                }
+            }
         }
     }
 
 
-    // Coroutine to delay triggering an animation
-    private IEnumerator TriggerAnimationWithDelay(string animName, float delay)
-    {
-        yield return new WaitForSeconds(delay); // Wait for the delay
-        followerAnimator.SetBool(animName, true);
-    }
 
     // Function to check if the follower is grounded using raycast
     private bool IsFollowerGrounded()
