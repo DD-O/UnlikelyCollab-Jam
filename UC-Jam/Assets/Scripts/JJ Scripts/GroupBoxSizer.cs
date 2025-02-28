@@ -5,15 +5,19 @@ using UnityEngine;
 
 public class GroupBoxSizer : MonoBehaviour
 {
-    public List<Transform> points;
+    private JJFollowTracker followTracker;
     public int Padding;
 
+    void Start()
+    {
+        followTracker = GetComponentInParent<JJFollowTracker>();
+    }
     public void PointBetweenPoints()
     {
-        var bound = new Bounds(points[0].position, Vector3.zero);
-        for (int i = 1; i < points.Count; i++)
+        var bound = new Bounds(followTracker.followerOrder[0].transform.position, Vector3.zero);
+        for (int i = 1; i < followTracker.followerOrder.Count; i++)
         {
-            bound.Encapsulate(points[i].position);
+            bound.Encapsulate(followTracker.followerOrder[i].transform.position);
         }
         transform.position = bound.center;
         transform.localScale = bound.size + new Vector3(Padding, Padding, 1);
