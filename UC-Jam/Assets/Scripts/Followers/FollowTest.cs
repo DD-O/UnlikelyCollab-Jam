@@ -49,6 +49,9 @@ public class FollowTest : MonoBehaviour
     // Store the previous position for velocity calculation
     private Vector3 previousPosition;
 
+    //Fix animmations for platform logic
+    private bool onSpecialPlatform = false;
+
     void Start()
     {
         // Initialize references
@@ -98,6 +101,9 @@ public class FollowTest : MonoBehaviour
 
         // Sync animations with the follower's velocity
         SyncAnimations(velocity);
+
+        Debug.Log("On special platform: " + onSpecialPlatform);
+
     }
 
     void FixedUpdate()
@@ -164,7 +170,7 @@ public class FollowTest : MonoBehaviour
                 currentPathPosition = path.Dequeue();
         }
 
-        Debug.Log(followerRb.linearVelocity); // You can remove this as you're using manual velocity calculation
+
     }
 
     private void ApplySpeedReduction()
@@ -199,15 +205,11 @@ public class FollowTest : MonoBehaviour
         // Handle Running Animation
         if (followerIsGrounded)
         {
-            Debug.Log("GROUNDED!");
-            // Check horizontal velocity to determine if the follower is moving left or right
-            Debug.Log("in loop " + Mathf.Abs(velocity.x));
 
-            if (Mathf.Abs(velocity.x) > 0.1f)  // Significant movement
+            if (Mathf.Abs(velocity.x) > 0.1f && !onSpecialPlatform)  // Significant movement
             {
                 // Trigger running animation based on horizontal velocity
                 followerAnimator.SetFloat("isRun_Anim", Mathf.Abs(velocity.x));
-                Debug.Log("RUNNING!");
             }
             else
             {
@@ -218,12 +220,9 @@ public class FollowTest : MonoBehaviour
             // Handle Idle Animation (when on ground and not moving)
             if (Mathf.Abs(velocity.x) < 0.1f && Mathf.Abs(velocity.y) < 0.1f)
             {
-                Debug.Log("HIT");
-
                 // Trigger idle animation if the follower is grounded but not moving
                 if (!followerAnimator.GetBool("isIdle_Anim")) // Avoid redundant calls
                 {
-                    Debug.Log("HIT2");
                     followerAnimator.SetBool("isIdle_Anim", true);
                 }
             }
@@ -243,7 +242,7 @@ public class FollowTest : MonoBehaviour
         }
 
         // Handle Jump Animation (based on upward velocity)
-        if (!followerIsGrounded && velocity.y > 0.1f)
+        if (!followerIsGrounded && velocity.y > 0.1f && !onSpecialPlatform)
         {
             if (!followerAnimator.GetBool("isJump_Anim")) // Avoid redundant calls
             {
@@ -259,7 +258,7 @@ public class FollowTest : MonoBehaviour
         }
 
         // Handle Falling Animation (based on downward velocity)
-        if (!followerIsGrounded && velocity.y < -0.1f)
+        if (!followerIsGrounded && velocity.y < -0.1f && !onSpecialPlatform)
         {
             if (!followerAnimator.GetBool("isFalling_Anim")) // Avoid redundant calls
             {
@@ -277,7 +276,6 @@ public class FollowTest : MonoBehaviour
             // Ensure idle animation is triggered when we land
             if (followerIsGrounded && Mathf.Abs(velocity.x) < 0.1f)
             {
-                Debug.Log("LANDED AND IDLE");
 
                 // Trigger idle animation if the follower is grounded and not moving
                 if (!followerAnimator.GetBool("isIdle_Anim"))
@@ -296,4 +294,27 @@ public class FollowTest : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(followerGroundCheck.transform.position, Vector2.down, raycastDistance, groundLayer);
         return hit.collider != null; // Returns true if the raycast hits something on the ground layer
     }
+
+    // Detect when the follower enters the special platform
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("SpecialPlatform"))
+        {
+            onSpecialPlatform = true;
+        }
+    }
+
+    // Detect when the follower exits the special platform
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("SpecialPlatform"))
+        {
+            onSpecialPlatform = false;
+        }
+    }
+
+
+
+
+
 }
