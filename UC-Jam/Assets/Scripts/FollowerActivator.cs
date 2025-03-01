@@ -11,6 +11,8 @@ public class FollowerActivator : MonoBehaviour
             if (follower != null)
             {
                 follower.SetActive(true); // Activate the follower
+                MusicManager.Instance.TriggerNextSong();
+
             }
             Destroy(gameObject); // Destroy this object
         }
