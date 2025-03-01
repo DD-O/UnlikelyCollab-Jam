@@ -1,3 +1,4 @@
+//using System.Diagnostics;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -21,6 +22,9 @@ public class PlayerController : MonoBehaviour
     // Audio
     private AudioSource sfxSource;
 
+    public bool playerOnSpecialPlatform = false;
+
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -29,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+
         // Check if player is on the ground
         bool wasGrounded = isGrounded;
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
@@ -121,4 +126,28 @@ public class PlayerController : MonoBehaviour
         facingRight = !facingRight;
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
+
+
+    // Detect when the follower enters the special platform
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("SpecialPlatform"))
+        {
+            Debug.Log("Collider entered - from player script");
+            playerOnSpecialPlatform = true;
+        }
+    }
+
+    // Detect when the follower exits the special platform
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("SpecialPlatform"))
+        {
+            Debug.Log("Collider left- from player script");
+            playerOnSpecialPlatform = false;
+        }
+    }
+
+
+
 }
