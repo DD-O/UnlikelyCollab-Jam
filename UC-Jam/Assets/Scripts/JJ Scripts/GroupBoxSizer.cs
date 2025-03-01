@@ -10,6 +10,7 @@ public class GroupBoxSizer : MonoBehaviour
 
     void Start()
     {
+        Padding = 0;
         followTracker = GetComponentInParent<JJFollowTracker>();
     }
     public void PointBetweenPoints()

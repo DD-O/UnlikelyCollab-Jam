@@ -1,0 +1,4 @@
+[] Make Main Perception Box
+[] Fix Coyote Jump Double Jump
+
+I'm gonna save art for last and for now, we can design the main level with flat shapes for now and put art over it. I don't wanna waste time drawin' anything that we might wanna change or not 
