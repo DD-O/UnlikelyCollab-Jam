@@ -53,6 +53,9 @@ public class FollowTest : MonoBehaviour
     public bool onSpecialPlatform = false;
     public bool playerOnSpecialPlatform = false;
 
+    // Audio
+    private AudioSource sfxSource;
+
     void Start()
     {
         // Initialize references
@@ -290,6 +293,10 @@ public class FollowTest : MonoBehaviour
             if (!followerAnimator.GetBool("isJump_Anim")) // Avoid redundant calls
             {
                 followerAnimator.SetBool("isJump_Anim", true);
+                if(gameObject.name == "Circle") { SoundManager.Instance.PlaySound("circleJUMP"); }
+                if (gameObject.name == "Triangle") { SoundManager.Instance.PlaySound("triangleJUMP"); }
+                if (gameObject.name == "Heart") { SoundManager.Instance.PlaySound("heartJUMP"); }
+                if (gameObject.name == "Star") { SoundManager.Instance.PlaySound("starJUMP"); }
             }
         }
         else

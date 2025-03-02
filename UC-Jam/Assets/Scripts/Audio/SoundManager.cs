@@ -1,73 +1,103 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager Instance;
+    public static SoundManager Instance { get; private set; }
 
-    [Header("SFX Settings")]
-    public List<SFXEntry> sfxClipsList;  // List to store SFX clips for easier Inspector editing
-    private Dictionary<string, SFXEntry> sfxClipsDict;  // Dictionary for fast access by name
+    [SerializeField] private AudioSource audioSourcePrefab;
+    [SerializeField] private int initialPoolSize = 5;
+    [SerializeField] private AudioClip[] soundClips; // Assign in Inspector
 
-    [Header("Audio Settings")]
-    [Range(0f, 1f)] public float sfxVolume = 1f;  // Global volume for sound effects
-
-    private AudioSource sfxSource;  // The AudioSource used to play SFX globally
+    private List<AudioSource> audioPool = new List<AudioSource>();
+    private Dictionary<string, AudioClip> soundLibrary = new Dictionary<string, AudioClip>();
 
     private void Awake()
     {
-        // Ensure that only one instance of SoundManager exists
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Keep the SoundManager across scenes
+            DontDestroyOnLoad(gameObject);
+            InitializePool();
+            AutoRegisterSounds();
         }
         else
         {
-            Destroy(gameObject); // If another instance exists, destroy this one
-        }
-
-        // Initialize the dictionary
-        sfxClipsDict = new Dictionary<string, SFXEntry>();
-
-        // Populate the dictionary from the List of SFX
-        foreach (var entry in sfxClipsList)
-        {
-            sfxClipsDict[entry.soundName] = entry;
-        }
-
-        // Initialize the AudioSource (used for global SFX)
-        sfxSource = gameObject.AddComponent<AudioSource>();
-    }
-
-    // Add a sound to the dictionary (can be called programmatically)
-    public void AddSFX(string soundName, AudioClip clip, float volume = 1f)
-    {
-        if (!sfxClipsDict.ContainsKey(soundName))
-        {
-            sfxClipsDict.Add(soundName, new SFXEntry { soundName = soundName, clip = clip, volume = volume });
+            Destroy(gameObject);
         }
     }
 
-    // Play a sound effect by name using the provided AudioSource
-    public void PlaySound(string soundName, AudioSource targetAudioSource)
+    private void InitializePool()
     {
-        if (sfxClipsDict.ContainsKey(soundName))
+        for (int i = 0; i < initialPoolSize; i++)
         {
-            SFXEntry entry = sfxClipsDict[soundName];
-            targetAudioSource.PlayOneShot(entry.clip, entry.volume * sfxVolume);  // Apply individual volume and global volume
+            AddAudioSourceToPool();
+        }
+    }
+
+    private void AutoRegisterSounds()
+    {
+        foreach (AudioClip clip in soundClips)
+        {
+            soundLibrary[clip.name] = clip; // Use filename as key
+        }
+    }
+
+    private AudioSource AddAudioSourceToPool()
+    {
+        AudioSource newSource = Instantiate(audioSourcePrefab, transform);
+        newSource.gameObject.SetActive(false);
+        audioPool.Add(newSource);
+        return newSource;
+    }
+
+    private AudioSource GetAvailableAudioSource()
+    {
+        foreach (var source in audioPool)
+        {
+            if (!source.isPlaying)
+            {
+                source.gameObject.SetActive(true);
+                return source;
+            }
+        }
+        return AddAudioSourceToPool();
+    }
+
+    public void PlaySound(string soundName, bool allowOverlap = false, float volume = 1f, float pitch = 1f)
+    {
+        if (soundLibrary.TryGetValue(soundName, out AudioClip clip))
+        {
+            if (!allowOverlap)
+            {
+                foreach (var activeSource in audioPool) // Renamed from 'source' to 'activeSource'
+                {
+                    if (activeSource.isPlaying && activeSource.clip == clip)
+                    {
+                        return; // Exit if the sound is already playing
+                    }
+                }
+            }
+
+            // Get an available AudioSource and play the sound
+            AudioSource newSource = GetAvailableAudioSource();
+            newSource.clip = clip;
+            newSource.volume = volume;
+            newSource.pitch = pitch;
+            newSource.Play();
+            StartCoroutine(DeactivateAfterPlaying(newSource));
         }
         else
         {
-            Debug.LogWarning($"Sound '{soundName}' not found in SFX dictionary!");
+            Debug.LogWarning($"Sound '{soundName}' not found!");
         }
     }
-}
 
-[System.Serializable]
-public class SFXEntry
-{
-    public string soundName;  // Name of the sound to reference
-    public AudioClip clip;    // The actual AudioClip to play
-    [Range(0f, 1f)] public float volume = 1f;  // Volume for this specific sound, default to 1 (full volume)
+
+    private IEnumerator DeactivateAfterPlaying(AudioSource source)
+    {
+        yield return new WaitWhile(() => source.isPlaying);
+        source.gameObject.SetActive(false);
+    }
 }

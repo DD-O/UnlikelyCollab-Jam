@@ -295,7 +295,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: ce8f9151bbc4f2740ba30e5b7a2b59e9, type: 3}
   m_Resource: {fileID: 8300000, guid: ce8f9151bbc4f2740ba30e5b7a2b59e9, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -424,7 +424,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 8cc37af093cf9ea409992b0d9255027b, type: 3}
   m_Resource: {fileID: 8300000, guid: 8cc37af093cf9ea409992b0d9255027b, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -521,7 +521,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: f879945313c6c9248a9a4e4cfcfb5c20, type: 3}
   m_Resource: {fileID: 8300000, guid: f879945313c6c9248a9a4e4cfcfb5c20, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3669,7 +3669,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2349224906859265263, guid: ccb68c350bdec0f40a61da9e4bed8c97, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ccb68c350bdec0f40a61da9e4bed8c97, type: 3}
@@ -4212,6 +4213,82 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: audioSourcePrefab
+      value: 
+      objectReference: {fileID: 2838381516026376812, guid: cc5d255b3f9fe784493be351a65db4e7, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: soundClips.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: sfxClipsList.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundClips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e5bb8f90fd6c2c84ea1175d18e3a88e2, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: a6c67b75cb86a304a9eb1bb77f4d3ca8, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundClips.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 46a00d70ca4148241a72d3b04b182a20, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundClips.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: ee9ac4a829318dd46b0214c29454f6c3, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundClips.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 90a1af71373d0524a858b9e6804afedd, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: soundCategories.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: sfxClipsList.Array.data[2].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: a6c67b75cb86a304a9eb1bb77f4d3ca8, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: sfxClipsList.Array.data[2].volume
+      value: 0.242
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: sfxClipsList.Array.data[2].soundName
+      value: circleJUMP
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: soundCategories.Array.data[0].categoryName
+      value: Jumps
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: soundCategories.Array.data[0].clips.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundCategories.Array.data[0].clips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e5bb8f90fd6c2c84ea1175d18e3a88e2, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundCategories.Array.data[0].clips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: a6c67b75cb86a304a9eb1bb77f4d3ca8, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundCategories.Array.data[0].clips.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: ee9ac4a829318dd46b0214c29454f6c3, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundCategories.Array.data[0].clips.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 90a1af71373d0524a858b9e6804afedd, type: 3}
+    - target: {fileID: 4582031791302639891, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
+      propertyPath: 'soundCategories.Array.data[0].clips.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 46a00d70ca4148241a72d3b04b182a20, type: 3}
     - target: {fileID: 6002999143377524938, guid: 6d5749f87d675b241bef12bca76360d9, type: 3}
       propertyPath: m_Name
       value: Sound Manager
@@ -4226,6 +4303,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 89009688}
+  - {fileID: 130755159}
   - {fileID: 8454952161078443187}
   - {fileID: 1855954208}
   - {fileID: 1303799929}
@@ -4235,4 +4313,3 @@ SceneRoots:
   - {fileID: 1626804879}
   - {fileID: 2125313478}
   - {fileID: 82081970}
-  - {fileID: 130755159}

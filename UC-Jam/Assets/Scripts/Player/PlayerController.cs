@@ -19,16 +19,12 @@ public class PlayerController : MonoBehaviour
 
     public Animator animator;
 
-    // Audio
-    private AudioSource sfxSource;
-
     public bool playerOnSpecialPlatform = false;
 
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        sfxSource = transform.Find("SFX").GetComponent<AudioSource>();
     }
 
     void Update()
@@ -79,7 +75,7 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isFalling_Anim", false);
 
                 // Jump SFX
-                SoundManager.Instance.PlaySound("Jump", sfxSource);
+                SoundManager.Instance.PlaySound("Jump");
             }
         }
 
@@ -116,7 +112,7 @@ public class PlayerController : MonoBehaviour
             if (!wasGrounded && isGrounded)
             {
                 // Play landing sound effect
-                SoundManager.Instance.PlaySound("Landing", sfxSource);
+                SoundManager.Instance.PlaySound("Landing");
             }
         }
     }
