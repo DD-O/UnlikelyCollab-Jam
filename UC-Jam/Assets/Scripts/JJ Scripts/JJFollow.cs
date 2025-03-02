@@ -1,13 +1,14 @@
+using System.Text.RegularExpressions;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class JJFollow : MonoBehaviour
 
 {
     private JJFollowTracker followTracker;
+    public GroupBoxSizer groupBoxSizer; 
     public GameObject perceptionBox;
     public Transform target;
-    public Rigidbody2D rigidBody;
-    public float distanceToStop;
     public float followSpeed;
     public bool goFollow = false;
 
@@ -17,9 +18,13 @@ public class JJFollow : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (goFollow == false) {
+        if (other.tag == "Player" && goFollow == false) {
+            if (groupBoxSizer.Padding == 0) {
+                groupBoxSizer.Padding = 5;
+            }
             perceptionBox.SetActive(false);
             followTracker.followerOrder.Add(this.gameObject);
+            print(other);
             goFollow = true;
         }
     }
