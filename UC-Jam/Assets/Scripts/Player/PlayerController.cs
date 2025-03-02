@@ -111,7 +111,7 @@ public class PlayerController : MonoBehaviour
             if (!wasGrounded && isGrounded)
             {
                 // Play landing sound effect
-                SoundManager.Instance.PlaySound("Landing", sfxSource);
+                //SoundManager.Instance.PlaySound("Landing", sfxSource);
             }
         }
     }
