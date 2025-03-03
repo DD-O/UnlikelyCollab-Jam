@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isFalling_Anim", false);
 
                 // Jump SFX
-                SoundManager.Instance.PlaySound("Jump");
+                SoundManager.Instance.PlaySound("playerJUMP");
             }
         }
 
@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
             if (!wasGrounded && isGrounded)
             {
                 // Play landing sound effect
-                SoundManager.Instance.PlaySound("Landing");
+                //SoundManager.Instance.PlaySound("Landing");
             }
         }
     }
