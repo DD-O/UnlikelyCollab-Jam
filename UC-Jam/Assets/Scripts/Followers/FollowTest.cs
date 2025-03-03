@@ -50,7 +50,11 @@ public class FollowTest : MonoBehaviour
     private Vector3 previousPosition;
 
     //Fix animmations for platform logic
-    private bool onSpecialPlatform = false;
+    public bool onSpecialPlatform = false;
+    public bool playerOnSpecialPlatform = false;
+
+    // Audio
+    private AudioSource sfxSource;
 
     void Start()
     {
@@ -64,15 +68,32 @@ public class FollowTest : MonoBehaviour
 
         // Set the previous position to the starting position
         previousPosition = transform.position;
+
+
+
+        //TEST
+        playerController = FindFirstObjectByType<PlayerController>();
     }
 
     void Update()
     {
+        playerOnSpecialPlatform = playerController.playerOnSpecialPlatform;
+        Debug.Log("In Update: " + onSpecialPlatform);
+
         // Manually calculate velocity
         Vector3 velocity = (transform.position - previousPosition) / Time.deltaTime;
         previousPosition = transform.position;
 
-        // Interpolate position
+        // Check if player is on special platform
+        if (onSpecialPlatform && playerOnSpecialPlatform)
+        {
+            // Directly set follower's position to player's position
+            transform.position = ObjectToFollow.transform.position;
+            followerAnimator.SetBool("playerOnSpecialPlatform", true);
+            return; // Skip the rest of Update logic
+        }
+
+        // Interpolate position normally
         if (currentPathPosition != Vector3.zero)
             transform.position += (currentPathPosition - transform.position) * Time.deltaTime * InterpolationSpeed;
 
@@ -99,12 +120,18 @@ public class FollowTest : MonoBehaviour
             Flip();
         }
 
+        if (playerController.playerOnSpecialPlatform)
+        {
+            followerAnimator.SetBool("isIdle_Anim", true);
+            followerAnimator.SetBool("playerOnSpecialPlatform", true);
+        }
+
         // Sync animations with the follower's velocity
         SyncAnimations(velocity);
 
-        Debug.Log("On special platform: " + onSpecialPlatform);
-
+        
     }
+
 
     void FixedUpdate()
     {
@@ -115,7 +142,7 @@ public class FollowTest : MonoBehaviour
 
         bool followerIsGrounded = IsFollowerGrounded(); // Use raycast to check if follower is grounded
 
-        if (groundCheckSides != null)
+        if (groundCheckSides != null && !playerOnSpecialPlatform)
         {
             groundedL = groundCheckSides.GroundedL;
             groundedR = groundCheckSides.GroundedR;
@@ -202,6 +229,25 @@ public class FollowTest : MonoBehaviour
         // First, check if the follower is grounded
         bool followerIsGrounded = IsFollowerGrounded();
 
+        Debug.Log("In Sync Animations: "+ onSpecialPlatform);
+
+
+
+        if(onSpecialPlatform) 
+        {
+            Debug.Log("true");
+            followerAnimator.SetBool("isIdle_Anim", true);
+            followerAnimator.SetBool("playerOnSpecialPlatform", true);
+            followerAnimator.SetBool("isJump_Anim", false);
+            followerAnimator.SetBool("isFalling_Anim", false);
+            //return; 
+        }
+        else
+        {
+            followerAnimator.SetBool("playerOnSpecialPlatform", false);
+        }
+
+        // Debug.Log("Playing animations");
         // Handle Running Animation
         if (followerIsGrounded)
         {
@@ -247,6 +293,10 @@ public class FollowTest : MonoBehaviour
             if (!followerAnimator.GetBool("isJump_Anim")) // Avoid redundant calls
             {
                 followerAnimator.SetBool("isJump_Anim", true);
+                if(gameObject.name == "Circle") { SoundManager.Instance.PlaySound("circleJUMP"); }
+                if (gameObject.name == "Triangle") { SoundManager.Instance.PlaySound("triangleJUMP"); }
+                if (gameObject.name == "Heart") { SoundManager.Instance.PlaySound("heartJUMP"); }
+                if (gameObject.name == "Star") { SoundManager.Instance.PlaySound("starJUMP"); }
             }
         }
         else

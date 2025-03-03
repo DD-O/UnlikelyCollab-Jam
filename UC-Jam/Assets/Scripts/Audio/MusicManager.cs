@@ -1,43 +1,60 @@
 using UnityEngine;
+using System.Collections;
 
 public class MusicManager : MonoBehaviour
 {
     public static MusicManager Instance { get; private set; }
 
-    private AudioSource audioSource;
+    public AudioSource[] musicTracks; // Assign AudioSources in the inspector
+    public float fadeDuration = 2f;   // Time in seconds for the fade-in effect
 
-    [Range(0f, 1f)] // Expose this in the Inspector as a slider (0 = mute, 1 = max volume)
-    public float musicVolume = 1f;  // Default volume set to 1 (max volume)
+    private int currentTrackIndex = 0; // Tracks which song should be unmuted next
 
     private void Awake()
     {
-        // Make sure there is only one MusicManager instance.
         if (Instance == null)
         {
             Instance = this;
-            audioSource = gameObject.AddComponent<AudioSource>();
-            DontDestroyOnLoad(gameObject); // Persist across scenes.
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // Ensure only one MusicManager exists.
+            Destroy(gameObject);
+            return;
+        }
+
+        // Initialize tracks: Play all but mute them, except the first one
+        for (int i = 0; i < musicTracks.Length; i++)
+        {
+            musicTracks[i].loop = true;
+            musicTracks[i].Play();
+            musicTracks[i].volume = (i == 0) ? 1f : 0f; // Set volume to 1 for the first song, 0 for the rest
         }
     }
 
-    // Play music with the specified clip and volume (using the public musicVolume variable).
-    public void PlayMusic(AudioClip musicClip)
+    public void TriggerNextSong()
     {
-        if (audioSource.clip == musicClip) return; // Avoid replaying the same track.
-
-        audioSource.clip = musicClip;
-        audioSource.loop = true;
-        audioSource.volume = musicVolume; // Set volume based on the Inspector value.
-        audioSource.Play();
+        if (currentTrackIndex < musicTracks.Length - 1) // Ensure there's a next song
+        {
+            currentTrackIndex++; // Move to the next track
+            StartCoroutine(FadeIn(musicTracks[currentTrackIndex], fadeDuration)); // Start fade-in effect
+        }
     }
 
-    // Stop the currently playing music.
-    public void StopMusic()
+    private IEnumerator FadeIn(AudioSource track, float duration)
     {
-        audioSource.Stop();
+        float startVolume = 0f;
+        track.volume = startVolume;
+        float targetVolume = 1f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            track.volume = Mathf.Lerp(startVolume, targetVolume, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null; // Wait for next frame
+        }
+
+        track.volume = targetVolume; // Ensure final volume is set
     }
 }
