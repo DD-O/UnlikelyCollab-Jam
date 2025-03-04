@@ -84,8 +84,7 @@ public class FollowTest : MonoBehaviour
     void FixedUpdate()
     {
         playerOnSpecialPlatform = playerController.playerOnSpecialPlatform;
-        Debug.Log("In Update: " + onSpecialPlatform);
-
+        
         // Manually calculate velocity
         Vector3 velocity = (transform.position - previousPosition) / Time.deltaTime;
         previousPosition = transform.position;
@@ -232,13 +231,8 @@ public class FollowTest : MonoBehaviour
         // First, check if the follower is grounded
         bool followerIsGrounded = IsFollowerGrounded();
 
-        Debug.Log("In Sync Animations: "+ onSpecialPlatform);
-
-
-
         if(onSpecialPlatform) 
         {
-            Debug.Log("true");
             followerAnimator.SetBool("isIdle_Anim", true);
             followerAnimator.SetBool("playerOnSpecialPlatform", true);
             followerAnimator.SetBool("isJump_Anim", false);
@@ -250,7 +244,7 @@ public class FollowTest : MonoBehaviour
             followerAnimator.SetBool("playerOnSpecialPlatform", false);
         }
 
-        // Debug.Log("Playing animations");
+
         // Handle Running Animation
         if (followerIsGrounded)
         {

@@ -7,6 +7,7 @@ public class MusicManager : MonoBehaviour
 
     public AudioSource[] musicTracks; // Assign AudioSources in the inspector
     public float fadeDuration = 2f;   // Time in seconds for the fade-in effect
+    public float musicVolume = 1f;    // Set this in the inspector for volume control
 
     private int currentTrackIndex = 0; // Tracks which song should be unmuted next
 
@@ -28,7 +29,7 @@ public class MusicManager : MonoBehaviour
         {
             musicTracks[i].loop = true;
             musicTracks[i].Play();
-            musicTracks[i].volume = (i == 0) ? 1f : 0f; // Set volume to 1 for the first song, 0 for the rest
+            musicTracks[i].volume = (i == 0) ? musicVolume : 0f; // Use musicVolume instead of 1f
         }
     }
 
@@ -45,16 +46,15 @@ public class MusicManager : MonoBehaviour
     {
         float startVolume = 0f;
         track.volume = startVolume;
-        float targetVolume = 1f;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)
         {
-            track.volume = Mathf.Lerp(startVolume, targetVolume, elapsedTime / duration);
+            track.volume = Mathf.Lerp(startVolume, musicVolume, elapsedTime / duration); // Fade to musicVolume
             elapsedTime += Time.deltaTime;
             yield return null; // Wait for next frame
         }
 
-        track.volume = targetVolume; // Ensure final volume is set
+        track.volume = musicVolume; // Ensure final volume is set to the inspector's value
     }
 }

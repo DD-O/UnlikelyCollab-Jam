@@ -8,10 +8,18 @@ public class SoundManager : MonoBehaviour
 
     [SerializeField] private AudioSource audioSourcePrefab;
     [SerializeField] private int initialPoolSize = 5;
-    [SerializeField] private AudioClip[] soundClips; // Assign in Inspector
+
+    [System.Serializable]
+    public struct SoundClip
+    {
+        public AudioClip clip;   // Sound file
+        [Range(0f, 1f)] public float volume; // Volume for this sound
+    }
+
+    [SerializeField] private SoundClip[] soundClips; // Assign in Inspector
 
     private List<AudioSource> audioPool = new List<AudioSource>();
-    private Dictionary<string, AudioClip> soundLibrary = new Dictionary<string, AudioClip>();
+    private Dictionary<string, SoundClip> soundLibrary = new Dictionary<string, SoundClip>();
 
     private void Awake()
     {
@@ -38,9 +46,12 @@ public class SoundManager : MonoBehaviour
 
     private void AutoRegisterSounds()
     {
-        foreach (AudioClip clip in soundClips)
+        foreach (SoundClip sound in soundClips)
         {
-            soundLibrary[clip.name] = clip; // Use filename as key
+            if (sound.clip != null)
+            {
+                soundLibrary[sound.clip.name] = sound; // Use the clip's filename as the key
+            }
         }
     }
 
@@ -65,35 +76,36 @@ public class SoundManager : MonoBehaviour
         return AddAudioSourceToPool();
     }
 
-    public void PlaySound(string soundName, bool allowOverlap = false, float volume = 1f, float pitch = 1f)
+    public void PlaySound(string clipName, bool allowOverlap = false, float overrideVolume = -1f, float pitch = 1f)
     {
-        if (soundLibrary.TryGetValue(soundName, out AudioClip clip))
+        if (soundLibrary.TryGetValue(clipName, out SoundClip sound))
         {
             if (!allowOverlap)
             {
-                foreach (var activeSource in audioPool) // Renamed from 'source' to 'activeSource'
+                foreach (var activeSource in audioPool)
                 {
-                    if (activeSource.isPlaying && activeSource.clip == clip)
+                    if (activeSource.isPlaying && activeSource.clip == sound.clip)
                     {
                         return; // Exit if the sound is already playing
                     }
                 }
             }
 
-            // Get an available AudioSource and play the sound
             AudioSource newSource = GetAvailableAudioSource();
-            newSource.clip = clip;
-            newSource.volume = volume;
+            newSource.clip = sound.clip;
             newSource.pitch = pitch;
+
+            // Use override volume if provided, otherwise use the preset volume
+            newSource.volume = (overrideVolume >= 0f) ? overrideVolume : sound.volume;
+
             newSource.Play();
             StartCoroutine(DeactivateAfterPlaying(newSource));
         }
         else
         {
-            Debug.LogWarning($"Sound '{soundName}' not found!");
+            Debug.LogWarning($"Sound '{clipName}' not found!");
         }
     }
-
 
     private IEnumerator DeactivateAfterPlaying(AudioSource source)
     {
