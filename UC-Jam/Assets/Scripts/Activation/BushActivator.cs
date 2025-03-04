@@ -4,7 +4,7 @@ public class BushActivator : MonoBehaviour
 {
     private void Awake()
     {
-        transform.GetChild(0).gameObject.SetActive(true);
+        transform.GetChild(0).gameObject.SetActive(false);
         transform.GetChild(1).gameObject.SetActive(false);
     }
 
@@ -25,7 +25,7 @@ public class BushActivator : MonoBehaviour
 
         bool state = GameManager.heartColorArea;
 
-        transform.GetChild(0).gameObject.SetActive(!state);
+        //transform.GetChild(0).gameObject.SetActive(!state);
         transform.GetChild(1).gameObject.SetActive(state);
     }
 }

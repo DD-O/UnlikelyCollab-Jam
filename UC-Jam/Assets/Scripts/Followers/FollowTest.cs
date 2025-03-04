@@ -77,6 +77,12 @@ public class FollowTest : MonoBehaviour
 
     void Update()
     {
+        // JJ Moved Code to FixedUpdate to Remove Jitter
+    }
+
+
+    void FixedUpdate()
+    {
         playerOnSpecialPlatform = playerController.playerOnSpecialPlatform;
         Debug.Log("In Update: " + onSpecialPlatform);
 
@@ -129,12 +135,9 @@ public class FollowTest : MonoBehaviour
         // Sync animations with the follower's velocity
         SyncAnimations(velocity);
 
-        
-    }
+        // JJ ^^ Above Code Was in Update, now in FixedUpdate to Fix Jitter
 
 
-    void FixedUpdate()
-    {
         if (ObjectToFollow == null)
             return;
 

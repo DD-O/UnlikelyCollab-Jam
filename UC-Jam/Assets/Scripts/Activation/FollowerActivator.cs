@@ -15,7 +15,7 @@ public class FollowerActivator : MonoBehaviour
                 MusicManager.Instance.TriggerNextSong();
                 groupBox.followerGroup.Add(follower); // JJ Add Follower to Group Box
                 if (groupBox.followerGroup.Count > 1) { // JJ If there's more than just Square in the Group...
-                    groupBox.padding = 6; // JJ ...Then Give the Group Perception Box Padding!
+                    groupBox.padding = 5; // JJ ...Then Give the Group Perception Box Padding!
                 }
 
             }

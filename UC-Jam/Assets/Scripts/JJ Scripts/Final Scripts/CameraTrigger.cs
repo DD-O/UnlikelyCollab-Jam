@@ -20,7 +20,7 @@ public class CameraTrigger : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        //if (cameraChanger.beginChange == false) {
+        if (other.tag == "Player") {
             cameraChanger.beginChange = true;
             cameraChanger.changeTime = 0.0f;
 
@@ -30,6 +30,6 @@ public class CameraTrigger : MonoBehaviour
             cameraChanger.targetSize = targetSize;
             cameraChanger.targetOffset = targetOffset;
             cameraChanger.changeSpeed = changeSpeed;
-        //}
+        }
     }
 }

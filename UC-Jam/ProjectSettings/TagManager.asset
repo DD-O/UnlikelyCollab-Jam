@@ -42,6 +42,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Star
+    uniqueID: 3492549203
+    locked: 0
   - name: Triangle
     uniqueID: 2426964449
     locked: 0
@@ -51,11 +54,11 @@ TagManager:
   - name: Circle
     uniqueID: 341962807
     locked: 0
-  - name: Star
-    uniqueID: 3492549203
-    locked: 0
   - name: Player
     uniqueID: 1033477187
+    locked: 0
+  - name: Grass
+    uniqueID: 3089784603
     locked: 0
   - name: Void
     uniqueID: 2844139593
